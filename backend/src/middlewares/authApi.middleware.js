@@ -1,7 +1,14 @@
 import jwt from "jsonwebtoken";
 
-const verifyApiProject=async(api_key,projectId,origin_of_request)=>{
-  
+const verifyApiProject=async(req,res,next)=>{
+  try {
+    const projectId=req.params.projectId;
+    const origin=req.host;
+    const apiKey=req.get('x-safeapi-key');
+    
+  } catch (error) {
+    
+  }
 }
 
 

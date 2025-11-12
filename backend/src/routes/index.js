@@ -9,7 +9,7 @@ const appRouter=express.Router();
 
 appRouter.use('/auth',authRouter)
 appRouter.use('/admin',adminRouter)
-appRouter.use('/r',gatewayRouter)// gateway routes
+// appRouter.use('/r',gatewayRouter)// gateway routes
 appRouter.use('/project',projectRouter)
 appRouter.use('/api_key',apikeyRouter)
 

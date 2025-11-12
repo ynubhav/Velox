@@ -1,67 +1,3 @@
-// import express from "express";
-// import axios from "axios";
-// import { APIProject } from "../models/Project.model.js";
-// import https from "https";
-
-// const agent = new https.Agent({
-//   rejectUnauthorized: false,
-// });
-
-// const gatewayRouter = express.Router();
-
-// gatewayRouter.use("/:projectId", async (req, res) => {
-//   // const api_route=req.url;//with queries
-//   // const base_api_route=api_route.split('?')[0];
-//   // const origin=req.get('origin');
-//   // const apiKey=req.get('x-safeapi-key');
-
-//   // res.json({original_route:req.ip+" "+req.method+" "+req.host+" "+req.url,
-//   //     base_api_route,
-//   //     origin:'hello'+origin,
-//   //     apiKey
-//   // })
-//   // req.host
-
-//   const projectId = req.params.projectId;
-
-//   const Project = await APIProject.findOne({ projectId });
-//   const method = req.method;
-//   const originUrl = Project.originUrl;
-//   const apiKey = req.get("x-safeapi-key");
-//   const redirect_url = `${originUrl}${req.url}`;
-//   console.log(redirect_url)
-//   const config = {
-//     method,
-//     url: redirect_url,
-//     headers: { ...req.headers },
-//     httpsAgent: agent,
-//   };
-//   if (method.toUpperCase() != "GET") {
-//     config.data = req.body;
-//   }
-//   try {
-//     const response = await axios(config);
-//     res.status(response.status).set(response.headers).send(response.data);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).json({ error: err.message+'lol' });
-//   }
-// });
-
-// export { gatewayRouter };
-
-// /*
-// steps in process of gateway
-
-// 1. check if projectId active and valid
-// 2. authourise the api : apikey, request origin,
-// 3. send request to the user's api
-// 4. get the result and return as it is
-// 5. if request cachable set the pair in redis
-// 6. create api log
-
-// */
-
 import express from "express";
 import axios from "axios";
 import https from "https";
@@ -74,21 +10,28 @@ const gatewayRouter = express.Router();
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 gatewayRouter.use("/:projectId", async (req, res) => {
+  const initTime = Date.now();
   const { projectId } = req.params;
   const method = req.method.toUpperCase();
   const apiKey = req.get("x-safeapi-key");
   const origin = req.get("origin");
 
   try {
-    // 1️⃣ validate project
+    // validate project
     const project = await APIProject.findOne({ projectId }).select(
-      "apiKey originUrl"
+      "apiKey originUrl status allowedOrigins publicRoutes PrivateRoutes"
     );
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
+
+    // check if origin allowed
+    if (origin != undefined && !project.allowedOrigins.includes(origin)) {
+      return res.status(503).json({ message: "origin not allowed" });
+    }
+
     console.log(1);
-    // 2️⃣ authorize
+    // authorize
     if (project.apiKey != apiKey) {
       return res.status(403).json({ error: "Invalid API key" });
     }
@@ -98,7 +41,11 @@ gatewayRouter.use("/:projectId", async (req, res) => {
       return res.status(403).json({ error: "Unauthorized origin" });
     }
     console.log(3);
-    // 3️⃣ prepare redirect target
+    // redirect only if active status
+    if (project.status === "suspended") {
+      return res.status(503).json({ message: "API Status : Suspended" });
+    }
+    // prepare redirect target
     const redirectUrl = `${project.originUrl}${req.url}`;
     console.log(redirectUrl);
     const parsed = new URL(redirectUrl);
@@ -114,7 +61,7 @@ gatewayRouter.use("/:projectId", async (req, res) => {
       });
     });
     console.log(5);
-    // 4️⃣ build axios config
+    // build axios config
     const config = {
       method,
       url: redirectUrl,
@@ -131,16 +78,18 @@ gatewayRouter.use("/:projectId", async (req, res) => {
       config.data = req.body;
     }
     console.log(7);
-    // 5️⃣ send request
+    // send request
     const response = await axios(config);
     console.log(8);
-    // 6️⃣ forward response
+    // forward response
     res.status(response.status).set(response.headers).send(response.data);
 
     // 🪵 future steps:
     // - log the request in Mongo
     // - store cache in Redis if cacheable
     // - increment usage counter
+    const finalTime = Date.now();
+    console.log(finalTime - initTime);
   } catch (err) {
     console.error("Gateway error:", err.message);
     res.status(502).json({

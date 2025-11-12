@@ -3,6 +3,7 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import { connectdb } from './configs/connectdb.js';
 import { appRouter } from './routes/index.js';
+import { gatewayRouter } from './routes/gateway.route.js';
 
 config();
 
@@ -12,7 +13,8 @@ await connectdb();
 
 app.use(cors());
 app.use(express.json());
-app.use('/api',appRouter)
+app.use('/api',appRouter)      // this backend's apis
+app.use('/r',gatewayRouter)   // gateway for apis
 
 app.use(async(req,res)=>{
     res.json({message:"hello from api server"});
