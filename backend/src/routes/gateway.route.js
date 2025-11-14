@@ -6,7 +6,7 @@ import { APIProject } from "../models/Project.model.js";
 
 const gatewayRouter = express.Router();
 
-// 🧠 agent to ignore SSL issues (only temporary for dev)
+//  agent to ignore SSL issues (only temporary for dev)
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 gatewayRouter.use("/:projectId", async (req, res) => {
