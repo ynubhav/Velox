@@ -12,9 +12,6 @@ const APIProjectSchema = new mongoose.Schema({
   // Generated SafeAPI Gateway URL
   proxyUrl: { type: String, required: true },
 
-  // Project-specific API key
-  apiKey: { type: String, required: true, select: false },
-
   // Security controls
   allowedOrigins: [{ type: String }], // whitelisted client domains
   
