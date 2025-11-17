@@ -4,12 +4,14 @@ import { config } from 'dotenv';
 import { connectdb } from './configs/connectdb.js';
 import { appRouter } from './routes/index.js';
 import { gatewayRouter } from './routes/gateway.route.js';
+import create_routes_cache from './cache/create-routes-cache.js';
 
 config();
 
 const app=express();
 
 await connectdb();
+await create_routes_cache();
 
 app.use(cors());
 app.use(express.json());
