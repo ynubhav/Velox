@@ -102,6 +102,15 @@ apikeyRouter.patch("/:keyId/toggle", authUser, async (req, res) => {
 
 apikeyRouter.get("/usage/:keyId", authUser, async (req, res) => {
   try {
+    const { keyId } = req.params;
+    const findkey = await APIKey.findOne({ _id: keyId });
+    if (!findkey || findkey.keystatus == "deleted") {
+      return res.status(404).json({ message: "Key not found" });
+    }
+    const usageLogs = await RequestLog.find({ apiKey: findkey.key }).sort({
+      timestamp: -1,
+    });
+    //modify for better output
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error" });
