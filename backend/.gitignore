@@ -1,3 +1,4 @@
 .env
 node_modules
 what_to_do_next.txt
+test.js
