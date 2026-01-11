@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -20,6 +21,7 @@ export default function Hero() {
 const [text, setText] = useState("");
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const session=useSession();
 
   useEffect(() => {
     const current = features[index];
@@ -48,18 +50,19 @@ const [text, setText] = useState("");
   }, [text, isDeleting, index]);
 
   return (
-    <section className="w-full h-screen bg-radial-[at_50%_25%] from-violet-600 via-green-200 to-blue-500 to-90% from-5% py-20 px-4 text-center rounded-none items-center flex flex-col justify-center">
+    <section className="w-full h-screen bg-radial-[at_50%_25%] from-violet-600 via-green-200 to-sky-400 to-90% from-5% py-20 px-4 text-center rounded-none items-center flex flex-col justify-center">
     <img className="h-40" src="veloxlogo.svg" alt="velox" />
     <h1 className="font-bold italic text-left text-4xl py-2 z-10 p-4">Velox</h1>
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-5xl md:text-6xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
+        className="text-sm md:text-sm font-bold tracking-tight bg-gradient-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
       >
         Secure, Fast & Scalable  
         <br />
         Your API Gateway Reimagined.
+        {JSON.stringify(session)}
       </motion.h1>
 
       <motion.span

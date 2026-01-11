@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function IconGoogle() {
   return (
     <svg width="18" height="18" viewBox="0 0 48 48" fill="none" aria-hidden>
-      <path d="M44.5 20H24v8.5h11.9C34.4 31.9 30 36 24 36 15.7 36 9 29.3 9 21s6.7-15 15-15c4 0 7.5 1.5 10.2 3.9l6.9-6.9C36.3 2.6 30.6 0 24 0 10.7 0 0 10.7 0 24s10.7 24 24 24c13.2 0 24-10.7 24-24 0-1.6-.1-3.1-.5-4.5z" fill="#FFC107"/>
-      <path d="M6.3 14.5 12.8 19C14.7 13.7 19.9 9.8 25.9 9.8c4 0 7.5 1.5 10.2 3.9l6.9-6.9C36.3 2.6 30.6 0 24 0 15.6 0 8.7 5.1 6.3 14.5z" fill="#FF3D00"/>
-      <path d="M24 48c6.6 0 12.3-2.6 16.7-6.9l-8-6.9C29.7 34.8 27 35.9 24 35.9c-6 0-10.4-4.1-11.9-8.6l-6.6 5.1C9 41.5 15.6 48 24 48z" fill="#4CAF50"/>
-      <path d="M44.5 20H24v8.5h11.9c-1.1 3.2-3.5 5.9-6.6 7.6l.1-.1 8 6.9C42.3 40.7 48 32.8 48 24c0-1.6-.1-3.1-.5-4.5z" fill="#1976D2"/>
+      <path d="M44.5 20H24v8.5h11.9C34.4 31.9 30 36 24 36 15.7 36 9 29.3 9 21s6.7-15 15-15c4 0 7.5 1.5 10.2 3.9l6.9-6.9C36.3 2.6 30.6 0 24 0 10.7 0 0 10.7 0 24s10.7 24 24 24c13.2 0 24-10.7 24-24 0-1.6-.1-3.1-.5-4.5z" fill="#FFC107" />
+      <path d="M6.3 14.5 12.8 19C14.7 13.7 19.9 9.8 25.9 9.8c4 0 7.5 1.5 10.2 3.9l6.9-6.9C36.3 2.6 30.6 0 24 0 15.6 0 8.7 5.1 6.3 14.5z" fill="#FF3D00" />
+      <path d="M24 48c6.6 0 12.3-2.6 16.7-6.9l-8-6.9C29.7 34.8 27 35.9 24 35.9c-6 0-10.4-4.1-11.9-8.6l-6.6 5.1C9 41.5 15.6 48 24 48z" fill="#4CAF50" />
+      <path d="M44.5 20H24v8.5h11.9c-1.1 3.2-3.5 5.9-6.6 7.6l.1-.1 8 6.9C42.3 40.7 48 32.8 48 24c0-1.6-.1-3.1-.5-4.5z" fill="#1976D2" />
     </svg>
   );
 }
@@ -17,7 +19,7 @@ function IconGoogle() {
 function IconGithub() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 .5C5.73.5.75 5.48.75 11.75c0 4.96 3.22 9.15 7.7 10.63.56.1.77-.24.77-.54 0-.27-.01-1-.02-1.95-3.13.68-3.79-1.5-3.79-1.5-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.12.08 1.71 1.16 1.71 1.16 1 .71 2.63.51 3.27.39.1-.77.39-1.31.71-1.61-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.17-3.02-.12-.28-.51-1.4.11-2.92 0 0 .96-.31 3.14 1.16.91-.25 1.88-.37 2.84-.37.96 0 1.93.13 2.84.38 2.18-1.47 3.14-1.16 3.14-1.16.62 1.52.23 2.64.11 2.92.73.79 1.17 1.79 1.17 3.02 0 4.32-2.64 5.28-5.15 5.56.4.34.76 1.01.76 2.04 0 1.47-.01 2.65-.01 3.01 0 .3.21.65.78.54 4.48-1.48 7.7-5.67 7.7-10.63C23.25 5.48 18.27.5 12 .5z"/>
+      <path d="M12 .5C5.73.5.75 5.48.75 11.75c0 4.96 3.22 9.15 7.7 10.63.56.1.77-.24.77-.54 0-.27-.01-1-.02-1.95-3.13.68-3.79-1.5-3.79-1.5-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.12.08 1.71 1.16 1.71 1.16 1 .71 2.63.51 3.27.39.1-.77.39-1.31.71-1.61-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.17-3.02-.12-.28-.51-1.4.11-2.92 0 0 .96-.31 3.14 1.16.91-.25 1.88-.37 2.84-.37.96 0 1.93.13 2.84.38 2.18-1.47 3.14-1.16 3.14-1.16.62 1.52.23 2.64.11 2.92.73.79 1.17 1.79 1.17 3.02 0 4.32-2.64 5.28-5.15 5.56.4.34.76 1.01.76 2.04 0 1.47-.01 2.65-.01 3.01 0 .3.21.65.78.54 4.48-1.48 7.7-5.67 7.7-10.63C23.25 5.48 18.27.5 12 .5z" />
     </svg>
   );
 }
@@ -27,11 +29,14 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // placeholder: implement login logic
     console.log({ email, password });
+    const res=await signIn('credentials', {redirect:false, email, password ,callbackUrl:'http://localhost:3000'})
+    if(res)
+      router.push('/');
   }
 
   return (
@@ -47,6 +52,11 @@ export default function LoginForm() {
           {/* Social buttons */}
           <div className="space-y-3">
             <button
+              onClick={async () => {
+                const res = await signIn('google',{redirect:false,callbackUrl:'http://localhost:3000'});
+                console.log(res);
+                if (res) { router.push('/') }
+              }}
               type="button"
               className="w-full flex items-center gap-3 border border-slate-400 rounded-md px-3 py-3 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:cursor-pointer"
             >
@@ -57,6 +67,11 @@ export default function LoginForm() {
             </button>
 
             <button
+              onClick={async () => {
+                const res = await signIn('github',{redirect:false,callbackUrl:'http://localhost:3000'});
+                console.log(res);
+                if (res) { router.push('/') }
+              }}
               type="button"
               className="w-full flex items-center gap-3 border border-slate-400 rounded-md px-3 py-3 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300 hover:cursor-pointer"
             >
@@ -81,7 +96,7 @@ export default function LoginForm() {
               <input
                 id="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); console.log(email) }}
                 placeholder="Email address*"
                 type="email"
                 className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
@@ -94,7 +109,7 @@ export default function LoginForm() {
               <input
                 id="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); console.log(password) }}
                 placeholder="Password*"
                 type={showPassword ? "text" : "password"}
                 className="w-full border border-slate-200 rounded-md px-3 py-2 pr-10 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
@@ -126,13 +141,14 @@ export default function LoginForm() {
 
           <p className="text-center text-sm text-slate-500">
             <Link href="/forgot-password" className="text-blue-600 underline text-sm">
-             Forgot Password?
+              Forgot Password?
             </Link>
           </p>
 
           {/* Log In Button */}
           <div>
             <button
+              onClick={handleSubmit}
               type="submit"
               className="w-full pb-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-300 hover:scale-102 hover:cursor-pointer"
             >

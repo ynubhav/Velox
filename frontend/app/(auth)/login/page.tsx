@@ -15,8 +15,8 @@ export default function Home() {
           Velox
         </h1>
       </Link>
-      
-      <LoginForm /><SideComponent />
+      <LoginForm />
+      <SideComponent />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -33,7 +34,12 @@ export default function Navbar() {
               {l}
             </button>
           ))}
-
+          <button
+          onClick={async()=>await signOut()}
+              className="text-gray-500 hover:text-gray-800 transition-all duration-100 font-medium hover:scale-105 hover:cursor-pointer hover:underline underline-offset-4"
+            >
+              Logout
+            </button>
           <Link
             href={"/signup"}
             className="px-5 py-2 rounded-full bg-radial-[at_1%_99%] from-blue-600 via-blue-200 to-blue-500 to-90% from-5% text-white font-semibold shadow-md
