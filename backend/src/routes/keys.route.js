@@ -21,6 +21,7 @@ apikeyRouter.post("/generate/:projectId", authUser, async (req, res) => {
     res.status(201).json({
       message: "Key Generated",
       key_Info: {
+        apikey:key,
         projectId: createApikey.projectId,
         label: createApikey.label,
         keystatus: createApikey.keystatus,

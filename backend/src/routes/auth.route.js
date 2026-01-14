@@ -1,7 +1,8 @@
 import express from "express";
 import { User } from "../models/User.model.js";
-import { generateToken } from "../utils/createJWT.js";
+import { generateTokens } from "../utils/createJWT.js";
 import { hashpassword, verifyhash } from "../utils/bcrypt-hasher.js";
+import authUser from "../middlewares/authUser.middleware.js";
 
 const authRouter = express.Router();
 
@@ -21,7 +22,9 @@ authRouter.post("/register", async (req, res) => {
     await User.findByIdAndUpdate(newUser._id, { lastLogin: Date.now() });
     return res.json({ message: "User Registered", data: newUser });
   } catch (err) {
-    return res.status(500).json({ message: "Couldnot Register User" ,error:err.message});
+    return res
+      .status(500)
+      .json({ message: "Could not Register User", error: err.message });
   }
 });
 
@@ -52,8 +55,11 @@ authRouter.post("/login", async (req, res) => {
     const matchpassword = await verifyhash(password, IsUserRegistered.password);
     if (IsUserRegistered && matchpassword) {
       const userId = IsUserRegistered._id;
-      const token = generateToken(userId);
-      await User.findByIdAndUpdate(userId, { lastLogin: Date.now() });
+      const { token, reftoken } = generateTokens(userId);
+      await User.findByIdAndUpdate(userId, {
+        refreshToken: reftoken,
+        lastLogin: Date.now(),
+      });
       res.status(200).json({
         message: "Login Succesfull",
         user: {
@@ -63,6 +69,7 @@ authRouter.post("/login", async (req, res) => {
           usertype: IsUserRegistered.usertype,
         },
         token,
+        refreshToken: reftoken,
       });
     }
   } catch (error) {
@@ -86,7 +93,9 @@ authRouter.post("/google_auth", async (req, res) => {
           email: data.email,
           googleId: data.providerId,
         });
+        const { token, reftoken } = generateTokens(createdUser._id);
         await User.findByIdAndUpdate(createdUser._id, {
+          refreshToken: reftoken,
           lastLogin: Date.now(),
         });
         return res.status(201).json({
@@ -97,6 +106,8 @@ authRouter.post("/google_auth", async (req, res) => {
             email: createdUser.email,
             role: createdUser.usertype,
           },
+          token,
+          refreshToken: reftoken,
         });
       }
       //id name email role
@@ -104,7 +115,11 @@ authRouter.post("/google_auth", async (req, res) => {
         { email: data.email },
         { googleId: data.providerId }
       );
-      await User.findByIdAndUpdate(updatedUser._id, { lastLogin: Date.now() });
+      const { token, reftoken } = generateTokens(updatedUser._id);
+      await User.findByIdAndUpdate(updatedUser._id, {
+        refreshToken: reftoken,
+        lastLogin: Date.now(),
+      });
       return res.status(201).json({
         message: "provider added successfull",
         user: {
@@ -113,9 +128,13 @@ authRouter.post("/google_auth", async (req, res) => {
           email: updatedUser.email,
           role: updatedUser.usertype,
         },
+        token,
+        refreshToken: reftoken,
       });
     }
+    const { token, reftoken } = generateTokens(IsUserRegistered._id);
     await User.findByIdAndUpdate(IsUserRegistered._id, {
+      refreshToken: reftoken,
       lastLogin: Date.now(),
     });
     return res.status(200).json({
@@ -126,6 +145,8 @@ authRouter.post("/google_auth", async (req, res) => {
         email: IsUserRegistered.email,
         role: IsUserRegistered.usertype,
       },
+      token,
+      refreshToken: reftoken,
     });
   } catch (error) {
     console.log(error);
@@ -134,11 +155,12 @@ authRouter.post("/google_auth", async (req, res) => {
 });
 
 authRouter.post("/github_auth", async (req, res) => {
+  //checks the user exist or not if not creates user
   try {
     const data = req.body;
     const IsUserRegistered = await User.findOne({ githubId: data.providerId });
     if (!IsUserRegistered) {
-      // register them with githubproviderId if email in it already exist attach it to them
+      // register them with github providerId if email in it already exist attach it to them
       const emailRegistered = await User.findOne({ email: data.email });
       if (!emailRegistered) {
         //normal creation
@@ -147,7 +169,9 @@ authRouter.post("/github_auth", async (req, res) => {
           email: data.email,
           githubId: data.providerId,
         });
+        const { token, reftoken } = generateTokens(createdUser._id);
         await User.findByIdAndUpdate(createdUser._id, {
+          refreshToken: reftoken,
           lastLogin: Date.now(),
         });
         return res.status(201).json({
@@ -158,6 +182,8 @@ authRouter.post("/github_auth", async (req, res) => {
             email: createdUser.email,
             role: createdUser.usertype,
           },
+          token,
+          refreshToken: reftoken,
         });
       }
       //id name email role
@@ -165,7 +191,11 @@ authRouter.post("/github_auth", async (req, res) => {
         { email: data.email },
         { githubId: data.providerId }
       );
-      await User.findByIdAndUpdate(updatedUser._id, { lastLogin: Date.now() });
+      const { token, reftoken } = generateTokens(updatedUser._id);
+      await User.findByIdAndUpdate(updatedUser._id, {
+        refreshToken: reftoken,
+        lastLogin: Date.now(),
+      });
       return res.status(201).json({
         message: "provider added successfull",
         user: {
@@ -174,9 +204,14 @@ authRouter.post("/github_auth", async (req, res) => {
           email: updatedUser.email,
           role: updatedUser.usertype,
         },
+        token,
+        refreshToken: reftoken,
       });
     }
+    const { token, reftoken } = generateTokens(IsUserRegistered._id);
+    console.log(token, reftoken);
     await User.findByIdAndUpdate(IsUserRegistered._id, {
+      refreshToken: reftoken,
       lastLogin: Date.now(),
     });
     return res.status(200).json({
@@ -187,6 +222,8 @@ authRouter.post("/github_auth", async (req, res) => {
         email: IsUserRegistered.email,
         role: IsUserRegistered.usertype,
       },
+      token: token,
+      refreshToken: reftoken,
     });
   } catch (error) {
     console.log(error);
@@ -194,7 +231,40 @@ authRouter.post("/github_auth", async (req, res) => {
   }
 });
 
-authRouter.post("/refresh", (req, res) => {});
-authRouter.post("/logout", (req, res) => {});
+authRouter.post("/refresh", async (req, res) => {
+  const { refreshToken } = req.body;
+  const { userId } = returnRefTokenid(refreshToken);
+  const IsvalidUser = await User.findOne({ _id: userId });
+  if (!IsvalidUser) return res.status(402).json({ message: "Not a user" });
+  const { token, reftoken } = generateTokens(userId);
+  return res.status(200).json({
+    message: "success",
+    user: {
+      id: IsvalidUser._id,
+      name: IsvalidUser.name,
+      email: IsvalidUser.email,
+      role: IsvalidUser.usertype,
+    },
+    token,
+    refreshToken: reftoken,
+  });
+});
+
+authRouter.post("/logout", authUser, async (req, res) => {
+  // validate user
+  try {
+    const userId = req.user._id;
+    const Invalidatetoken = await User.findOneAndUpdate(
+      { _id: userId },
+      { refreshToken: null }
+    );
+    if (!Invalidatetoken)
+      return res.status(404).json({ message: "User not found" });
+    return res.status(200).json({ message: "Logout Successfull" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
 
 export { authRouter };
