@@ -57,7 +57,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-sm md:text-sm font-bold tracking-tight bg-gradient-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
+        className="text-sm md:text-sm font-bold tracking-tight bg-linear-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
       >
         Secure, Fast & Scalable  
         <br />
