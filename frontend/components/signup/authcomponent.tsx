@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {userRegister} from "@/lib/backend_proxy_functions/userRegister";
+import {userRegister} from "@/backend_proxy_functions/userRegister";
 
 function IconGoogle() {
   return (
@@ -43,12 +43,11 @@ export default function SignUpForm() {
       return toast.error("try another email, this one's taken")}
 
     //call SignIn with credentials
-    const signinRes=await signIn('credentials',{redirect:false,email,password,callbackUrl:'http://localhost:3000/'});
+    const signinRes=await signIn('credentials',{redirect:false,email,password,callbackUrl:'/dashboard'});
     if(signinRes)
     {
       toast.dismiss(id);
       toast.success('signed in')
-      router.push('/');
       return
     }
     toast.error('unexpected error');

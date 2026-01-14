@@ -34,10 +34,8 @@ export default function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     console.log({ email, password });
-    const res=await signIn('credentials', {redirect:false, email, password ,callbackUrl:'http://localhost:3000'})
-    if(res)
-      router.push('/');
-  }
+    const res=await signIn('credentials', {redirect:false, email, password ,callbackUrl:'/dashboard'});
+    }
 
   return (
     <div className="flex min-w-[400px] items-start justify-center text-white py-10 px-6 rounded-lg ">
