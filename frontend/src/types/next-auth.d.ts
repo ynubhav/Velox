@@ -6,7 +6,7 @@ declare module "next-auth" {
     user: {
       id: string;
       role: string;
-    } & DefaultSession["user"]; // Merges your custom fields with standard ones
+    } & DefaultSession["user"];
     error?: "RefreshAccessTokenError"; // Allows the session callback to return/check for errors
   }
 
@@ -29,6 +29,6 @@ declare module "next-auth/jwt" {
     backendjwt: string;
     refreshjwt: string;
     jwtexpiry: number;
-    error?: "RefreshAccessTokenError"; // Crucial for your refresh logic
+    error?: "RefreshAccessTokenError";
   }
 }
