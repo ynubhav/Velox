@@ -18,7 +18,7 @@ const features = [
 const longest = Math.max(...features.map(f => f.length));
 
 export default function Hero() {
-const [text, setText] = useState("");
+  const [text, setText] = useState("");
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const session=useSession();
