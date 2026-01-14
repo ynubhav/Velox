@@ -1,26 +1,34 @@
-import NextAuth from "next-auth"
-import { JWT } from "next-auth/jwt"
+import NextAuth, { DefaultSession } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string
-      role: string
-      name?: string | null
-      email?: string | null
-      image?: string | null
-    }
+      id: string;
+      role: string;
+    } & DefaultSession["user"]; // Merges your custom fields with standard ones
+    error?: "RefreshAccessTokenError"; // Allows the session callback to return/check for errors
   }
 
   interface User {
-    id: string
-    role: string
+    id: string;
+    role: string;
+    backendjwt: string;
+    refreshjwt: string;
+    jwtexpiry: number;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
-    userId: string
-    role: string
+    userId: string;
+    role: string;
+    backendjwt: string;
+    refreshjwt: string;
+    jwtexpiry: number;
+    error?: "RefreshAccessTokenError"; // Crucial for your refresh logic
   }
 }
