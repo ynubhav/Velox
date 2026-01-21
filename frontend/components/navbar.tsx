@@ -95,7 +95,7 @@ export default function Navbar() {
                 <div className="absolute right-0 mt-3 w-40 rounded-xl bg-white shadow-md border border-gray-100">
                   <Link
                     href="/account"
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:cursor-pointer"
+                    className="block px-4 py-2 text-gray-700 rounded-t-xl hover:bg-gray-100 hover:cursor-pointer"
                   >
                     Profile
                   </Link>
@@ -107,7 +107,7 @@ export default function Navbar() {
                   </Link>
                   <button
                     onClick={handlelogout}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 hover:cursor-pointer"
+                    className="w-full text-left px-4 py-2 rounded-b-xl text-gray-700 hover:bg-gray-100 hover:cursor-pointer"
                   >
                     Logout
                   </button>

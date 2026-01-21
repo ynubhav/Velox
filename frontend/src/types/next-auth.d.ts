@@ -7,6 +7,7 @@ declare module "next-auth" {
       id: string;
       role: string;
     } & DefaultSession["user"];
+    token? :string;
     error?: "RefreshAccessTokenError"; // Allows the session callback to return/check for errors
   }
 

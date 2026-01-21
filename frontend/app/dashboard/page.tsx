@@ -1,153 +1,51 @@
-"use client";
+"use server";
 
-import { CreateProjectModal } from "@/components/dashboard/CreateProjectModal";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import DashboardPage from "@/components/dashboard/page";
+import { NEXT_AUTH_CONFIG } from "@/lib/auth";
+import { getServerSession, Session } from "next-auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import DashboardClient from "./dashboardclient";
 
-type Project = {
-  name: string;
-  projectId: string;
-  proxyUrl: string;
-  status: "active" | "suspended";
-};
+export default async function () {
+  //check auth
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const session: Session | null = await getServerSession(NEXT_AUTH_CONFIG);
+  if (!session || session.error === "RefreshAccessTokenError") {
+    // Redirect to login if not authenticated
+    redirect("/login");
+  }
+  // console.log("TOKEN RESPONSE", await tokenResponse.json());
+  //also fetch projects data
+  const projects = [];
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/project`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${session.token}`,
+      cookie: (await headers()).get("cookie") ?? "",
+    },
+  });
 
-  // 🔹 fetch projects
-  useEffect(() => {
-    async function fetchProjects() {
-      try {
-        // TODO: replace with your real API call
-        // const res = await fetch("/api/project");
-        // const data = await res.json();
-        // setProjects(data.projects);
+  if (!response.ok) {
+    const text = await response.text();
+    redirect("/login");
+  }
 
-        // mock for now
-        setProjects([
-          {
-            name: "something",
-            projectId: "xyx1",
-            proxyUrl: "asss",
-            status: "active",
-          },
-          {
-            name: "something",
-            projectId: "xyx2",
-            proxyUrl: "asss",
-            status: "suspended",
-          },
-          {
-            name: "something",
-            projectId: "xyx3",
-            proxyUrl: "asss",
-            status: "suspended",
-          },
-          {
-            name: "something",
-            projectId: "xyx4",
-            proxyUrl: "asss",
-            status: "suspended",
-          },
-          {
-            name: "something",
-            projectId: "xyx5",
-            proxyUrl: "asss",
-            status: "suspended",
-          },
-        ]);
-      } catch (err) {
-        console.error("Failed to load projects", err);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const data = await response.json();
 
-    fetchProjects();
-  }, []);
-
+  projects.push(...data.projects);
+  projects.sort(sortaccordingdate);
+  function sortaccordingdate(
+    a: { createdAt: string },
+    b: { createdAt: string },
+  ) {
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  }
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-1 bg-slate-800 text-white p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold">Projects</h1>
-            <p className="text-sm text-slate-300">
-              Manage your APIs behind Velox
-            </p>
-          </div>
-
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 rounded px-3 py-2"
-          >
-            Create Project
-          </button>
-        </div>
-
-        {/* Loading */}
-        {loading && <p className="text-slate-400">Loading projects...</p>}
-
-        {/* Empty State */}
-        {!loading && projects.length === 0 && (
-          <div className="flex flex-col items-center justify-center mt-24 gap-4">
-            <p className="text-slate-400">You don’t have any projects yet</p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 rounded px-3 py-2"
-            >
-              Create your first Project
-            </button>
-          </div>
-        )}
-
-        {/* Projects List */}
-        {!loading && projects.length > 0 && (
-          <div className="space-y-3">
-            {projects.map((project) => (
-              <div
-                key={project.projectId}
-                className="bg-slate-900 rounded p-4 flex items-center justify-between"
-              >
-                <div>
-                  <p className="font-semibold">{project.name}</p>
-                  <p className="text-sm text-slate-400">{project.proxyUrl}</p>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      project.status === "active"
-                        ? "bg-green-700"
-                        : "bg-yellow-700"
-                    }`}
-                  >
-                    {project.status}
-                  </span>
-
-                  <button
-                    onClick={() =>
-                      router.push(`/dashboard/projects/${project.projectId}`)
-                    }
-                    className="text-sm text-blue-400 hover:underline"
-                  >
-                    Open
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      <CreateProjectModal
-        open={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-      />
-    </div>
+    <>
+      <DashboardClient>
+        <DashboardPage session={session} projects={projects} />
+      </DashboardClient>
+    </>
   );
 }

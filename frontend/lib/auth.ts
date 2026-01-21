@@ -34,7 +34,7 @@ export const NEXT_AUTH_CONFIG: NextAuthOptions = {
           role: data.user.usertype,
           backendjwt: data.token,
           refreshjwt: data.refreshToken,
-          jwtexpiry: Date.now() + 15 * 60 * 1000,
+          jwtexpiry: Date.now() + 5 * 60 * 1000,
         };
       },
     }),
@@ -124,6 +124,7 @@ export const NEXT_AUTH_CONFIG: NextAuthOptions = {
       // Pass data from token to session
       session.user.id = token.userId;
       session.user.role = token.role;
+      session.token = token.backendjwt;
       session.error = token.error;
 
       return session;

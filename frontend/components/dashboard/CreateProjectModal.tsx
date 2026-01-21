@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 type Props = {
   open: boolean;
   onClose: () => void;
+  session: Session;
 };
 
-export function CreateProjectModal({ open, onClose }: Props) {
+export function CreateProjectModal({ open, onClose ,session }: Props) {
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -55,7 +57,7 @@ export function CreateProjectModal({ open, onClose }: Props) {
       }
 
       onClose();
-      router.push(`/projects/${data.projectId}`);
+      router.push(`/dashboard/projects/${data.projectId}`);
     } catch (err: any) {
       setError(err.message);
     } finally {

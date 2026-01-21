@@ -21,7 +21,7 @@ export default function Hero() {
   const [text, setText] = useState("");
   const [index, setIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const session=useSession();
+  //const session=useSession();
 
   useEffect(() => {
     const current = features[index];
@@ -57,12 +57,12 @@ export default function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-sm md:text-sm font-bold tracking-tight bg-linear-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
+        className="text-xl md:text-3xl font-bold tracking-tight bg-linear-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
       >
         Secure, Fast & Scalable  
         <br />
         Your API Gateway Reimagined.
-        {JSON.stringify(session)}
+        
       </motion.h1>
 
       <motion.span
