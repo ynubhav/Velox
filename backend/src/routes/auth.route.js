@@ -1,6 +1,6 @@
 import express from "express";
 import { User } from "../models/User.model.js";
-import { generateTokens } from "../utils/createJWT.js";
+import { generateTokens, returnRefTokenid } from "../utils/createJWT.js";
 import { hashpassword, verifyhash } from "../utils/bcrypt-hasher.js";
 import authUser from "../middlewares/authUser.middleware.js";
 
@@ -237,6 +237,8 @@ authRouter.post("/refresh", async (req, res) => {
   const IsvalidUser = await User.findOne({ _id: userId });
   if (!IsvalidUser) return res.status(402).json({ message: "Not a user" });
   const { token, reftoken } = generateTokens(userId);
+  console.log('refresh');
+  console.log(token);
   return res.status(200).json({
     message: "success",
     user: {

@@ -12,6 +12,7 @@ const authUser = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
+    //console.log('Verification token:', token);
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = decoded; // accessing id through req.user._id

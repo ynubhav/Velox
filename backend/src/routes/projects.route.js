@@ -55,7 +55,7 @@ projectRouter.get("/", authUser, async (req, res) => {
     const userId = req.user._id;
     const UserProjectData = await User.findById(userId).populate(
       "projects",
-      "name description projectId originUrl ProxyUrl"
+      "name description projectId originUrl proxyUrl status createdAt",
     );
     // populate required things
     res.status(200).json({
@@ -74,11 +74,11 @@ projectRouter.get("/:projectId", authUser, async (req, res) => {
     const reqprojId = req.params.projectId;
     const UserProjectData = await User.findById(userId).populate(
       "projects",
-      "name description projectId originUrl ProxyUrl"
+      "name description projectId originUrl proxyUrl status rateLimit allowedOrigins createdAt",
     );
     //console.log(UserProjectData.projects)
     const Results = UserProjectData.projects.filter((projectinfo) => {
-      console.log(projectinfo.projectId == reqprojId);
+      //console.log(projectinfo.projectId == reqprojId);
       return projectinfo.projectId == reqprojId;
     });
     if (Results.length == 1) {
@@ -97,16 +97,17 @@ projectRouter.get("/:projectId", authUser, async (req, res) => {
 projectRouter.put("/:projectId", authUser, async (req, res) => {
   try {
     const userId = req.user._id;
-    const { allowedOrigins, rateLimit, status } = req.body;
+    const { description, allowedOrigins, rateLimit, status } = req.body;
     const projectId = req.params.projectId;
     const UpdateProject = await APIProject.findOneAndUpdate(
       { projectId, userId },
       {
+        description,
         allowedOrigins,
         rateLimit,
         status,
         updatedAt: Date.now(),
-      }
+      },
     );
     res.status(202).json({ message: "APIProject Updated Just Now" });
   } catch (error) {
@@ -121,14 +122,23 @@ projectRouter.delete("/:projectId", authUser, async (req, res) => {
     const projectId = req.params.projectId;
     const userId = req.user._id;
     // verify by project
+    const findUser = await User.findById(userId);
+    if (!findUser) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+    console.log(projectId, userId);
     const GetProject_id = await APIProject.findOne({ userId, projectId });
+    if (!GetProject_id) {
+      return res.status(404).json({ message: "Project Not Found" });
+    }
     const deleteProject = await APIProject.findOneAndDelete({
       userId,
       projectId,
     });
-    const UserPrjRem = await User.findByIdAndUpdate(userId, {
+    const RemoveUserProject = await User.findByIdAndUpdate(userId, {
       $pull: { projects: GetProject_id._id },
     });
+
     // remove from cache
     ProjectDeletion(projectId);
 
@@ -206,7 +216,7 @@ projectRouter.patch(
             cacheTTL,
             description,
           },
-          { new: true }
+          { new: true },
         );
         //update in cache
         UpdateRouteCache(projectId, InitialRoute, updateRoute);
@@ -218,7 +228,7 @@ projectRouter.patch(
       console.log(error);
       res.status(500).json({ message: "Error" });
     }
-  }
+  },
 );
 
 projectRouter.delete(
@@ -250,7 +260,7 @@ projectRouter.delete(
       console.log(error);
       res.status(500).json({ message: "Error" });
     }
-  }
+  },
 );
 
 // to get all routes in a project

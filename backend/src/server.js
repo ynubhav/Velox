@@ -15,6 +15,13 @@ await create_routes_cache();
 
 app.use(cors());
 app.use(express.json());
+app.use((req,res,next) => {
+  const route = req.originalUrl;
+  const method = req.method;
+  console.log("🔃","route:",method,route,"request received at", new Date().toISOString());
+  return next();
+});
+
 app.use("/api", appRouter); // this backend's apis
 app.use("/r", gatewayRouter); // gateway for apis
 
