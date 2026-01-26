@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
  type Route = {
-  id: string;
+  _id: string;
   method: string;
   path: string;
   authRequired: boolean;
@@ -60,7 +60,7 @@ export default function RoutesPage({
       </header>
 
       {/* Actions */}
-      <section className="flex gap-3">
+      {/* <section className="flex gap-3">
         <button className="btn-primary flex items-center gap-2">
           <Plus className="size-4" />
           Add Route
@@ -70,7 +70,7 @@ export default function RoutesPage({
           <Upload className="size-4" />
           Bulk Upload
         </button>
-      </section>
+      </section> */}
 
       {/* Routes Table */}
       <section className="border rounded-lg overflow-hidden">
@@ -97,14 +97,14 @@ export default function RoutesPage({
                 </td>
               </tr>
             ) : (
-              routes.map((route) => <RouteRow key={route.id} route={route} />)
+              routes.map((route,idx) => <RouteRow key={idx} route={route} />)
             )}
           </tbody>
         </table>
       </section>
 
       {/* Add Route */}
-      <AddRouteSection />
+      <AddRouteSection projectId={projectId} />
     </div>
   );
 }

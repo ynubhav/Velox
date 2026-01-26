@@ -250,6 +250,7 @@ projectRouter.delete(
           _id: routeId,
         });
         //delete from cache
+        if(foundRoute)
         deleteRouteCache(projectId, foundRoute);
 
         return res.status(200).json({ message: "Route deleted" });

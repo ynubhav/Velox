@@ -15,10 +15,10 @@ export default function KpiCards({ data }: any) {
       {items.map(([label, value]) => (
         <div
           key={label}
-          className="rounded-xl border border-neutral-800 bg-neutral-950 p-4"
+          className="rounded-xl border border-neutral-800 bg-neutral-100 p-4"
         >
           <p className="text-xs text-neutral-500">{label}</p>
-          <p className="text-xl font-semibold text-neutral-100">{value}</p>
+          <p className="text-xl font-semibold text-neutral-950">{value}</p>
         </div>
       ))}
     </div>

@@ -23,6 +23,11 @@ export function CreateProjectModal({ open, onClose ,session }: Props) {
   if (!open) return null;
 
   async function handleCreate() {
+
+    setTimeout(() => {
+      return;
+    }, 500);
+
     setError(null);
 
     if (!name || !originUrl) {
@@ -67,11 +72,11 @@ export function CreateProjectModal({ open, onClose ,session }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-md bg-slate-900 text-white rounded-lg p-6 relative">
+      <div className="w-full max-w-md  text-black bg-gray-100 rounded-lg p-6 relative">
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-slate-400 hover:text-white"
+          className="absolute top-3 right-3 text-slate-400 hover:text-slate-500 hover:cursor-pointer"
         >
           <X className="size-5" />
         </button>
@@ -81,31 +86,31 @@ export function CreateProjectModal({ open, onClose ,session }: Props) {
         {/* Form */}
         <div className="space-y-4">
           <div>
-            <label className="text-sm text-slate-300">Name *</label>
+            <label className="text-sm text-slate-700">Name *</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full mt-1 rounded bg-slate-800 px-3 py-2 outline-none"
+              className="w-full mt-1 rounded  px-3 py-2 outline-none border"
               placeholder="My API"
             />
           </div>
 
           <div>
-            <label className="text-sm text-slate-300">Description</label>
+            <label className="text-sm text-slate-700">Description</label>
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full mt-1 rounded bg-slate-800 px-3 py-2 outline-none"
+              className="w-full mt-1 rounded px-3 py-2 outline-none border"
               placeholder="Optional"
             />
           </div>
 
           <div>
-            <label className="text-sm text-slate-300">Origin URL *</label>
+            <label className="text-sm text-slate-700">Origin URL *</label>
             <input
               value={originUrl}
               onChange={(e) => setOriginUrl(e.target.value)}
-              className="w-full mt-1 rounded bg-slate-800 px-3 py-2 outline-none"
+              className="w-full mt-1 rounded px-3 py-2 outline-none border"
               placeholder="https://api.example.com"
             />
           </div>
@@ -120,14 +125,14 @@ export function CreateProjectModal({ open, onClose ,session }: Props) {
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2 rounded bg-slate-700 hover:bg-slate-600"
+            className="px-4 py-2 rounded border border-slate-600 hover:bg-slate-200 hover:cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleCreate}
             disabled={loading}
-            className="px-4 py-2 rounded bg-green-600 hover:bg-green-700 disabled:opacity-50"
+            className="px-4 py-2 rounded text-white bg-green-500 hover:bg-green-600 disabled:opacity-50 hover:cursor-pointer"
           >
             {loading ? "Creating..." : "Create"}
           </button>

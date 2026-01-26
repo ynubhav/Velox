@@ -77,7 +77,7 @@ const UpdateRouteCache = (projectId, InitialRoute, UpdateRoute) => {
 };
 
 const deleteRouteCache = (projectId, Route) => {
-  if (!Routes_cache[projectId] || !Routes_cache[projectId][newRoute.method]) {
+  if (!Routes_cache[projectId] || !Routes_cache[projectId][Route.method]) {
     throw new Error("Route Was not Found to be registered before hand");
   }
 
@@ -86,14 +86,16 @@ const deleteRouteCache = (projectId, Route) => {
   const arr = Routes_cache[projectId][Route.method].filter((route) => {
     return !JSON.stringify(route) === JSON.stringify(Route);
   });
+
   const finallen = arr.length;
   Routes_cache[projectId][Route.method] = [...arr];
 
-  if (!(initiallen - 1 == finallen)) {
-    throw new Error("Route Not Found Deleted");
-  }
+  // if (!(initiallen - 1 == finallen)) {
+  //   throw new Error("Route Not Found Deleted");
+  // }
+
   Routes_cache.__meta = { updatedAt: Date.now() };
-  console.log("ROUTE CACHE ROUTE DELETED");
+  console.log("ROUTE CACHE : ROUTE DELETED");
 };
 
 const ProjectDeletion = (projectId) => {

@@ -12,7 +12,7 @@ export default async function CacheEfficiency() {
   ];
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full">
       <h2 className="text-sm font-medium text-neutral-400">
         Cache hit ratio (%)
       </h2>

@@ -11,7 +11,7 @@ import {
 
 export default function SimpleLineChart({ data, dataKey }: any) {
   return (
-    <div className="h-72 rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+    <div className="h-72 w-full rounded-xl border border-neutral-800 bg-neutral-100 p-4">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <XAxis dataKey="time" stroke="#666" />
@@ -20,7 +20,7 @@ export default function SimpleLineChart({ data, dataKey }: any) {
           <Line
             type="monotone"
             dataKey={dataKey}
-            stroke="#e5e5e5"
+            stroke="#4F46E5"
             strokeWidth={2}
           />
         </LineChart>

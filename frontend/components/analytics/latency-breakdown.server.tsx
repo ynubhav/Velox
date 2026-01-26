@@ -17,8 +17,10 @@ export default async function LatencyBreakdown() {
       </h2>
 
       {/* reuse chart twice instead of overloading */}
-      <SimpleLineChart data={data} dataKey="gateway" />
-      <SimpleLineChart data={data} dataKey="backend" />
+      <div className="flex gap-2">
+        <SimpleLineChart data={data} dataKey="gateway" />
+        <SimpleLineChart data={data} dataKey="backend" />
+      </div>
     </div>
   );
 }

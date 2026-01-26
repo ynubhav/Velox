@@ -307,6 +307,18 @@ body {
     background-color: #3e34c9;
 }
 
+.btn-danger {
+    color: rgb(255, 253, 253);
+    background-color: #f34450;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.btn-danger:hover {
+    background-color: #bd3939;
+}
+
 .btn-danger-second {
     color: rgb(224, 35, 35);
     background-color: #f5e6e7;

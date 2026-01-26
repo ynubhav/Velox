@@ -70,21 +70,21 @@ export default function DashboardPage({
   return (
     <div className="h-screen flex flex-col">
       <Dashnavbar />
-      <div className="flex-1 bg-slate-800 text-white p-6">
+      <div className="flex-1 p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold">Projects</h1>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-slate-500">
               Manage your APIs behind Velox
             </p>
           </div>
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 rounded px-3 py-2"
+            className="btn-primary hover:scale-101 flex items-center gap-2"
           >
-            Create Project
+           <FolderPlus className="size-5" /> Create Project
           </button>
         </div>
 
@@ -97,9 +97,9 @@ export default function DashboardPage({
             <p className="text-slate-400">You don’t have any projects yet</p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 rounded px-3 py-2"
+              className="flex items-center gap-2 btn-primary rounded px-3 py-2"
             >
-              Create your first Project
+              <FolderPlus className="size-5" />Create your first Project
             </button>
           </div>
         )}
@@ -110,19 +110,19 @@ export default function DashboardPage({
             {projects.map((project) => (
               <div
                 key={project.projectId}
-                className="bg-slate-900 rounded p-4 flex items-center justify-between"
+                className="border border-gray-400 rounded p-4 flex items-center justify-between"
               >
                 <div>
                   <p className="font-semibold">{project.name}</p>
-                  <p className="text-sm text-slate-400">{project.proxyUrl}</p>
+                  <Link href={project.proxyUrl} className="text-sm font-mono text-slate-500 hover:underline hover:text-blue-500">{project.proxyUrl}</Link>
                 </div>
 
                 <div className="flex items-center gap-4">
                   <span
                     className={`text-xs px-2 py-1 rounded ${
                       project.status === "active"
-                        ? "bg-green-700"
-                        : "bg-yellow-700"
+                        ? "bg-green-300"
+                        : "bg-yellow-300"
                     }`}
                   >
                     {project.status}
@@ -135,7 +135,7 @@ export default function DashboardPage({
                     onClick={() =>
                       router.push(`/dashboard/projects/${project.projectId}`)
                     }
-                    className="text-sm text-blue-400 hover:underline"
+                    className="text-white btn-primary rounded bg-blue-500 py-2 px-3 hover:bg-blue-600 hover:cursor-pointer hover:underline"
                   >
                     Open
                   </button>
@@ -143,9 +143,9 @@ export default function DashboardPage({
                     onClick={async () =>
                       await handledeleteProject(project.projectId)
                     }
-                    className="text-sm text-red-400 hover:underline"
+                    className="text-sm text-red-700 hover:bg-red-100 p-2 rounded hover:underline"
                   >
-                    Delete
+                    <Trash className="size-4" />
                   </button>
                 </div>
               </div>
@@ -164,6 +164,8 @@ export default function DashboardPage({
 
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { FolderPlus, PlusSquare, Trash } from "lucide-react";
+import Link from "next/link";
 
 export function timeAgo(iso: string) {
   return formatDistanceToNow(new Date(iso), { addSuffix: true });
