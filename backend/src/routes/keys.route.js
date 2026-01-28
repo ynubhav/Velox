@@ -16,12 +16,16 @@ apikeyRouter.post("/generate/:projectId", authUser, async (req, res) => {
     if (!isProject) {
       return res.status(404).json({ message: "Project Not Found" });
     }
+    const isusedlabel = await APIKey.findOne({ label });
+    if (isusedlabel) {
+      return res.status(403).json({ message: "Label already in use" });
+    }
     const key = generateApiKey(userId, projectId);
     const createApikey = await APIKey.create({ key, projectId, label });
     res.status(201).json({
       message: "Key Generated",
       key_Info: {
-        apikey:key,
+        apikey: key,
         projectId: createApikey.projectId,
         label: createApikey.label,
         keystatus: createApikey.keystatus,
@@ -46,7 +50,7 @@ apikeyRouter.get("/project/:projectId", authUser, async (req, res) => {
     const keys = await APIKey.find({ projectId });
     res
       .status(200)
-      .json({ message: `api keys for the projectId ${projectId}`, Keys: keys });
+      .json({ message: `api keys for the projectId ${projectId}`, keys: keys });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error" });
@@ -101,7 +105,7 @@ apikeyRouter.patch("/:keyId/toggle", authUser, async (req, res) => {
   }
 });
 
-apikeyRouter.get("/usage/:keyId", authUser, async (req, res) => {
+apikeyRouter.get("/:keyId/usage", authUser, async (req, res) => {
   try {
     const { keyId } = req.params;
     const findkey = await APIKey.findOne({ _id: keyId });
