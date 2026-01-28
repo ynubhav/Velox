@@ -1,10 +1,12 @@
 "use client";
 
-import { Plus, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Plus, Trash2, ToggleLeft, ToggleRight, Loader } from "lucide-react";
 import { ApiKeyRow } from "@/components/api-keys/apikeyrow";
 import { ApiKey } from "./types";
 import { GenerateKeyModal } from "@/components/api-keys/generateapi";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function ApiKeysPage({
   projectId,
@@ -13,33 +15,95 @@ export function ApiKeysPage({
   projectId: string;
   apiKeys: ApiKey[];
 }) {
+  const [label, setlabel] = useState<string>(""); // label for the api key to generte
+  const [open, setopen] = useState(false); // open or close the generate box
+  const [loading, setloading] = useState(false);
+  const [seen, setseen] = useState(false);
+  const [opensebox, setseebox] = useState(false); // to see the generated api key
+  const [apikey, setapikey] = useState("");
+  const [newapilabel,setnewapilabel]=useState("");
+
+  console.log(apiKeys);
+
+  const handleCreateKey = async () => {
+    // call the create api
+    if (label === "") return toast.error("label not added");
+
+    setloading(true);
+    const response = await fetch(`/api/api_key/generate/${projectId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ label }),
+    });
+
+    if (!response.ok) {
+      setloading(false);
+      return toast.error("Unable to create key");
+    }
+
+    setloading(false);
+    const data=await response.json();
+    setapikey(data.key_Info.apikey);
+    setnewapilabel(data.key_Info.label);
+    return toast.success(data.message);
+  };
+
   return (
     <div className="space-y-8 px-4 min-h-screen max-w-5xl">
       {/* Header */}
       <header className="space-y-2">
         <p className="text-xs text-slate-500">
-          <Link className="hover:underline" href="/dashboard">/dashboard</Link>
-          <Link className="hover:underline" href="/dashboard/projects">/projects</Link>
-          <Link className="hover:underline" href={`/dashboard/projects/${projectId}`}>/{projectId}</Link>
+          <Link className="hover:underline" href="/dashboard">
+            /dashboard
+          </Link>
+          <Link className="hover:underline" href="/dashboard/projects">
+            /projects
+          </Link>
+          <Link
+            className="hover:underline"
+            href={`/dashboard/projects/${projectId}`}
+          >
+            /{projectId}
+          </Link>
           /api-keys
         </p>
 
-        <h1 className="text-2xl font-semibold text-slate-900">
-          API Keys
-        </h1>
+        <h1 className="text-2xl font-semibold text-slate-900">API Keys</h1>
 
         <p className="text-sm text-slate-600 max-w-2xl">
-          API keys are used to authenticate requests to your gateway.
-          Keep them secret. You will only see a key once.
+          API keys are used to authenticate requests to your gateway. Keep them
+          secret. You will only see a key once.
         </p>
       </header>
 
       {/* Actions */}
-      <section>
-        <button className="btn-primary flex items-center gap-2">
+      <section className="flex items-center gap-2">
+        <button
+          onClick={() => setopen(true)}
+          className="btn-primary flex items-center gap-2"
+        >
           <Plus className="size-4" />
           Generate New Key
         </button>
+        {open && (
+          <div className="flex gap-2">
+            <input
+              onChange={(e) => setlabel(e.target.value)}
+              type="text"
+              placeholder="label for the key"
+              className="rounded border border-gray-400 p-2"
+            />
+            <button onClick={handleCreateKey} className="btn-primary">
+              {loading ? (
+                <Loader className="size-4 animate-spin duration-1000" />
+              ) : (
+                "Generate"
+              )}
+            </button>
+          </div>
+        )}
       </section>
 
       {/* API Keys Table */}
@@ -55,7 +119,7 @@ export function ApiKeysPage({
           </thead>
 
           <tbody>
-            {apiKeys.length === 0 ? (
+            {!apiKeys || apiKeys.length === 0 ? (
               <tr>
                 <td
                   colSpan={4}
@@ -65,14 +129,12 @@ export function ApiKeysPage({
                 </td>
               </tr>
             ) : (
-              apiKeys.map((key) => (
-                <ApiKeyRow key={key.id} apiKey={key} />
-              ))
+              apiKeys.map((key) => <ApiKeyRow key={key._id} apiKey={key} />)
             )}
           </tbody>
         </table>
       </section>
-      <GenerateKeyModal apiKey={'ahfuifadh892q9rqdhuhq8qio'} />
+      {!seen && <GenerateKeyModal label={newapilabel} apiKey={apikey} />}
     </div>
   );
 }

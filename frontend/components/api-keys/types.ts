@@ -1,6 +1,7 @@
 export type ApiKey = {
-  id: string;
+  _id: string;
   label: string;
-  enabled: boolean;
-  lastUsedAt?: string;
+  key: string;
+  keystatus: string;
+  lastUsed?: string;
 };
