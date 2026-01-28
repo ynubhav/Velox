@@ -2,6 +2,15 @@ import { ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 import { ApiKey } from "./types";
 
 export function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
+
+  const handledelete = async ()=>{
+
+  };
+
+  const handlediasble = async ()=>{
+
+  }
+  
   return (
     <tr className="border-b last:border-none">
       <td className="px-4 py-2 font-mono">
@@ -9,18 +18,18 @@ export function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
       </td>
 
       <td className="px-4 py-2">
-        {apiKey.enabled ? "Enabled" : "Disabled"}
+        {apiKey.keystatus==='active' ? "Enabled" : "Disabled"}
       </td>
 
       <td className="px-4 py-2">
-        {apiKey.lastUsedAt
-          ? new Date(apiKey.lastUsedAt).toLocaleString("en-GB")
+        {apiKey.lastUsed
+          ? new Date(apiKey.lastUsed).toLocaleString("en-GB")
           : "Never"}
       </td>
 
       <td className="px-4 py-2 flex justify-end gap-3">
         <button className="text-slate-600 hover:text-slate-900 flex items-center gap-1">
-          {apiKey.enabled ? (
+          {apiKey.keystatus ? (
             <>
               <ToggleLeft className="size-4" />
               Disable
