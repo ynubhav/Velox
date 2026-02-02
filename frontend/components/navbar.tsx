@@ -56,7 +56,7 @@ export default function Navbar() {
         {/* Logo */}
         <div className="flex items-center gap-2 hover:cursor-pointer">
           <img className="h-10" src="veloxlogo.svg" alt="velox" />
-          <p className="font-bold text-slate-900 tracking-wide text-lg italic">
+          <p className="font-bold text-slate-200 tracking-wide text-lg italic">
             VELOX
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function Navbar() {
           {links.map((l) => (
             <button
               key={l}
-              className="text-gray-500 hover:text-gray-800 transition-all duration-100 font-medium hover:scale-105 hover:cursor-pointer hover:underline underline-offset-4"
+              className="text-gray-400 hover:text-gray-300 transition-all duration-100 font-medium hover:scale-105 hover:cursor-pointer hover:underline underline-offset-4"
             >
               {l}
             </button>

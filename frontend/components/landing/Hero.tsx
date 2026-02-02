@@ -50,9 +50,9 @@ export default function Hero() {
   }, [text, isDeleting, index]);
 
   return (
-    <section className="w-full h-screen bg-radial-[at_50%_25%] from-violet-600 via-green-200 to-sky-400 to-90% from-5% py-20 px-4 text-center rounded-none items-center flex flex-col justify-center">
+    <section className="w-full h-screen bg-zinc-950 py-20 px-4 text-center rounded-none items-center flex flex-col justify-center">
     <img className="h-40" src="veloxlogo.svg" alt="velox" />
-    <h1 className="font-bold italic text-left text-4xl py-2 z-10 p-4">Velox</h1>
+    <h1 className="font-bold italic text-left text-zinc-200 text-4xl py-2 z-10 p-4">Velox</h1>
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,8 +71,8 @@ export default function Hero() {
         transition={{ delay: 0.3 }}
         className="mt-6 text-md text-left  text-white max-w-2xl mx-auto transition-all duration-500"
       >
-        <span className="font-extralight text-gray-500">{"It has it ALL ! "}</span>
-        <span className="text-slate-600 font-mono">{text}</span>
+        <span className="font-extralight text-gray-400">{"It has it ALL ! "}</span>
+        <span className="text-slate-500 font-mono">{text}</span>
       </motion.span>
 
       <motion.div
@@ -90,7 +90,7 @@ export default function Hero() {
 
         <Link
           href="/docs"
-          className="px-6 py-3 rounded-xl border border-gray-600 hover:bg-gray-800 transition-all duration-500 hover:px-8 hover:text-gray-100  text-gray-800 font-semibold"
+          className="px-6 py-3 rounded-xl border border-gray-600 hover:bg-gray-800 transition-all duration-500 hover:px-8 hover:text-gray-100  text-gray-400 font-semibold"
         >
           View Docs
         </Link>
