@@ -71,7 +71,7 @@ export default function ProjectPage({ projectId, project }: Props) {
   }, []);
 
   return (
-    <div className="space-y-6 px-4 min-h-screen">
+    <div className="space-y-4 px-4 min-h-screen">
       {/* Header */}
       <header className="space-y-1">
         <div className="text-sm font-light text-gray-500">
