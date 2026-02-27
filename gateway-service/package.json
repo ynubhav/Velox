@@ -19,5 +19,8 @@
     "express": "^5.2.1",
     "ioredis": "^5.9.2",
     "node-color-log": "^13.0.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19"
   }
 }
