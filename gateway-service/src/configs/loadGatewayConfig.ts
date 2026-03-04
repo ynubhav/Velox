@@ -39,6 +39,8 @@ export async function loadGatewayConfig(): Promise<void> {
       });
     }
 
+    console.log("response from admin:", res.data);
+
     logger.color('green').log(`🔄 Gateway config loaded (${projects.length} projects)`);
   } catch (err: any) {
     logger.color('red').log("Failed to load gateway config:", err.message);
