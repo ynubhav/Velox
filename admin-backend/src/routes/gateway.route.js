@@ -88,6 +88,8 @@ gatewayConfigRouter.get("/gateway/config", async (req, res) => {
       apiKeys: keysByProject[project.projectId] ?? [],
     }));
 
+    console.log("Gateway config built successfully for", gatewayProjects.length, "projects");
+
     return res.json({ projects: gatewayProjects });
   } catch (err) {
     console.error("Gateway config build failed:", err.message);
