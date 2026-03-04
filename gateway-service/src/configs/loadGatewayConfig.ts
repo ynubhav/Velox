@@ -26,7 +26,7 @@ export async function loadGatewayConfig(): Promise<void> {
       },
     });
 
-    const projects: GatewayProjectConfig[] = res.data.projects;
+    const projects: GatewayProjectConfig[] = res.projects;
     if (!Array.isArray(projects)) {
       throw new Error("Invalid gateway config payload");
     }
@@ -39,7 +39,7 @@ export async function loadGatewayConfig(): Promise<void> {
       });
     }
 
-    console.log("response from admin:", res.data);
+    console.log("response from admin:", JSON.stringify(res));
 
     logger.color('green').log(`🔄 Gateway config loaded (${projects.length} projects)`);
   } catch (err: any) {
