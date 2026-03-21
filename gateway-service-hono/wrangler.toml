@@ -1,0 +1,12 @@
+name = "gateway-service-hono"
+main = "src/index.ts"
+compatibility_date = "2024-11-18"
+compatibility_flags = [ "nodejs_compat" ]
+
+[vars]
+# Add your variables here (same as in your .env)
+# In production, use `wrangler secret put <KEY>` for these:
+# ADMIN_BASE_URL = ""
+# UPSTASH_REDIS_REST_URL = ""
+# UPSTASH_REDIS_REST_TOKEN = ""
+# INTERNAL_ADMIN_SECRET = ""
