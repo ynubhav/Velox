@@ -1,8 +1,12 @@
 "use client";
 
 export default function LogsTable({ logs }: any) {
+  if (!logs || !Array.isArray(logs)) {
+    return <div className="p-4 text-sm text-neutral-500">No activity logs available.</div>;
+  }
+
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-100 overflow-hidden">
+    <div className="rounded-xl border border-neutral-800 bg-neutral-100 h-full overflow-y-auto w-full">
       <table className="w-full text-sm">
         <thead className="bg-neutral-100 text-neutral-900">
           <tr>

@@ -3,16 +3,25 @@ import { useState, useRef, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { Logout } from "@/lib/logout";
+import { ThemeToggle } from "./theme-toggle";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  
   const { data: session } = useSession();
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const links = ["Features", "Pricing", "Docs", "Blog"];
+  const links = [
+    { name: "Features", href: "/features" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Docs", href: "/docs" },
+    { name: "Blog", href: "/blog" },
+  ];
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -47,116 +56,140 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-[90%]">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-[90%] font-mono">
       <nav
-        className="backdrop-blur-xl bg-white/10 border border-white/20 
-        shadow-[0_8px_30px_rgb(0,0,0,0.15)] 
-        rounded-2xl px-6 py-3 flex items-center justify-between"
+        className="backdrop-blur-xl bg-card/80 border-2 border-primary/20 
+        shadow-[0_8px_30px_rgb(0,0,0,0.3)] 
+        rounded-none px-6 py-3 flex items-center justify-between"
       >
         {/* Logo */}
-        <div className="flex items-center gap-2 hover:cursor-pointer">
-          <img className="h-10" src="veloxlogo.svg" alt="velox" />
-          <p className="font-bold text-slate-200 tracking-wide text-lg italic">
-            VELOX
+        <Link href="/" className="flex items-center gap-2 hover:cursor-pointer group">
+          <img className="h-8 grayscale group-hover:grayscale-0 transition-all" src="veloxlogo.svg" alt="velox" />
+          <p className="font-bold text-primary tracking-tighter text-lg underline decoration-accent/50 decoration-2 underline-offset-4">
+            VELOX.SH
           </p>
-        </div>
+        </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {links.map((l) => (
-            <button
-              key={l}
-              className="text-gray-400 hover:text-gray-300 transition-all duration-100 font-medium hover:scale-105 hover:cursor-pointer hover:underline underline-offset-4"
+            <Link
+              key={l.name}
+              href={l.href}
+              className="text-muted-foreground hover:text-accent transition-all duration-200 text-sm uppercase tracking-widest hover:underline underline-offset-4"
             >
-              {l}
-            </button>
+              {l.name}
+            </Link>
           ))}
 
           {!session ? (
             <Link
               href={"/signup"}
-              className="px-5 py-2 rounded-full bg-radial-[at_1%_99%] from-blue-600 via-blue-200 to-blue-500 to-90% from-5% text-white font-semibold shadow-md
-              hover:shadow-lg transition-all cursor-pointer hover:outline-2 outline-blue-600 hover:scale-105"
+              className="btn-primary text-xs"
             >
-              Get Started
+              [ GET_STARTED ]
             </Link>
           ) : (
             <div className="relative" ref={profileRef}>
-              {/* Profile Circle */}
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="h-10 w-10 rounded-full bg-blue-600 text-white font-semibold flex items-center justify-center hover:cursor-pointer"
+                className="h-10 w-10 border-2 border-accent text-accent font-bold flex items-center justify-center hover:bg-accent hover:text-background transition-all"
               >
                 {firstLetter}
               </button>
 
-              {/* Profile Dropdown */}
               {profileOpen && (
-                <div className="absolute right-0 mt-3 w-40 rounded-xl bg-white shadow-md border border-gray-100">
+                <div className="absolute right-0 mt-3 w-48 rounded-none bg-muted border-2 border-primary shadow-2xl p-2 animate-in fade-in slide-in-from-top-2">
                   <Link
                     href="/account"
-                    className="block px-4 py-2 text-gray-700 rounded-t-xl hover:bg-gray-100 hover:cursor-pointer"
+                    className="block px-4 py-2 text-primary hover:bg-primary hover:text-background transition-colors"
                   >
-                    Profile
+                    {">"} PROFILE
                   </Link>
                   <Link
                     href="/dashboard"
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:cursor-pointer"
+                    className="block px-4 py-2 text-primary hover:bg-primary hover:text-background transition-colors"
                   >
-                    Dashboard
+                    {">"} DASHBOARD
                   </Link>
+                  <div className="h-[2px] bg-primary/20 my-1" />
                   <button
                     onClick={handlelogout}
-                    className="w-full text-left px-4 py-2 rounded-b-xl text-gray-700 hover:bg-gray-100 hover:cursor-pointer"
+                    className="w-full text-left px-4 py-2 text-red-400 hover:bg-red-500 hover:text-foreground transition-colors"
                   >
-                    Logout
+                    {">"} LOGOUT
                   </button>
                 </div>
               )}
             </div>
           )}
+          
+          <ThemeToggle />
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-white hover:cursor-pointer"
-          onClick={() => setOpen(!open)}
-        >
-          {open ? <X size={26} /> : <Menu size={26} />}
-        </button>
+        <div className="flex items-center gap-4 md:hidden">
+          <ThemeToggle />
+          <button
+            className="text-primary hover:text-accent transition-colors"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X size={26} /> : <Menu size={26} />}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Dropdown */}
       {open && (
         <div
-          className="mt-3 backdrop-blur-xl bg-white/10 border border-white/20 
-          rounded-2xl px-6 py-4 shadow-[0_8px_30px_rgb(0,0,0,0.25)] md:hidden"
+          className="mt-3 backdrop-blur-xl bg-card/90 border-2 border-primary/20 
+          rounded-none px-6 py-4 shadow-[0_8px_30px_rgb(0,0,0,0.5)] md:hidden flex flex-col gap-4 animate-in slide-in-from-top-5 fade-in"
         >
           {links.map((l) => (
-            <div
-              key={l}
-              className="py-2 text-gray-500 font-medium hover:cursor-pointer hover:text-gray-600 transition"
+            <Link
+              key={l.name}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="py-2 text-muted-foreground font-medium hover:text-accent transition uppercase tracking-widest border-b border-primary/10"
             >
-              {l}
-            </div>
+              {">"} {l.name}
+            </Link>
           ))}
 
           {!session ? (
             <Link
               href="/signup"
-              className="w-full mt-10 px-5 py-2 rounded-full bg-linear-to-r
-              from-blue-500 via-blue-300 to-purple-600 hover:scale-105 text-white font-semibold shadow-md hover:cursor-pointer"
+              onClick={() => setOpen(false)}
+              className="btn-primary text-center"
             >
-              Get Started
+              [ GET_STARTED ]
             </Link>
           ) : (
-            <button
-              onClick={async () => await Logout()}
-              className="w-full mt-10 px-5 py-2 rounded-full bg-linear-to-r
-              from-blue-500 via-blue-300 to-purple-600 hover:scale-105 text-white font-semibold shadow-md hover:cursor-pointer"
-            >
-              Logout
-            </button>
+            <div className="flex flex-col gap-4">
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="py-2 text-primary font-bold hover:text-accent transition uppercase tracking-widest border-b border-primary/10"
+              >
+                {">"} DASHBOARD
+              </Link>
+              <Link
+                href="/account"
+                onClick={() => setOpen(false)}
+                className="py-2 text-primary font-bold hover:text-accent transition uppercase tracking-widest border-b border-primary/10"
+              >
+                {">"} PROFILE
+              </Link>
+              <button
+                onClick={async () => {
+                  setOpen(false);
+                  await Logout();
+                }}
+                className="btn-secondary text-red-400 border-red-400/50 w-full"
+              >
+                [ LOGOUT ]
+              </button>
+            </div>
           )}
         </div>
       )}
