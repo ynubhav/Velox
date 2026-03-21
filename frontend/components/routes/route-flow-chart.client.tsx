@@ -73,7 +73,7 @@ export function RouteFlowChart({ routes }: { routes: Route[] }) {
       <div className="flex-1 w-full bg-card/50 overflow-hidden relative cursor-grab active:cursor-grabbing">
         <TransformWrapper
           initialPositionX={0}
-          initialY={100}
+          initialPositionY={100}
           initialScale={1}
           minScale={0.1}
           maxScale={5}
