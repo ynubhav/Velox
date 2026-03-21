@@ -1,81 +1,89 @@
-import { ArrowRight } from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
+import { Terminal, Code, Cpu, Globe, Rocket } from "lucide-react";
 
 const steps = [
   {
-    step: "1",
-    title: "Spin Up Your Gateway",
-    desc: "Create a new isolated project with auto-generated credentials, environment settings, and a unique proxy base path.",
+    step: "01",
+    title: "PROVISION_GATEWAY",
+    desc: "Initialize isolated gateway nodes with cryptographically secure credentials and unique namespace mapping.",
+    icon: Cpu,
   },
   {
-    step: "2",
-    title: "Add Your Backend Routes",
-    desc: "Register backend services with method, target URL, and mapped paths. Velox auto-checks collisions and assigns unique proxy slugs.",
+    step: "02",
+    title: "MAP_ENDPOINTS",
+    desc: "Register upstream backend services via unified API console. automated collision detection for all proxy routes.",
+    icon: Globe,
   },
   {
-    step: "3",
-    title: "Apply Auth & API Keys",
-    desc: "Enable authRequired, issue hashed API keys, set origin whitelists, and lock down access at project or route level.",
+    step: "03",
+    title: "LOCKDOWN_ACCESS",
+    desc: "Deploy origin-whitelisting and cryptographically signed API keys. Grant granular access control at route level.",
+    icon: Terminal,
   },
   {
-    step: "4",
-    title: "Add Caching & Rate Limits",
-    desc: "Enable Redis caching for GETs, set TTLs, and activate global or per-route rate limiting for reliability and speed.",
+    step: "04",
+    title: "OPTIMIZE_FLOW",
+    desc: "Configuring Redis cache TTLs and Token-Bucket rate limiters. Ensure sub-ms overhead on your data aircraft.",
+    icon: Code,
   },
   {
-    step: "5",
-    title: "Go Live & Monitor",
-    desc: "Start routing traffic through your Velox URL and monitor real-time metrics like latency, error rates, and request volumes.",
+    step: "05",
+    title: "LAUNCH_OPERATIONS",
+    desc: "Migrate traffic to your Velox production endpoint. Monitor live metrics through real-time telemetry dashboard.",
+    icon: Rocket,
   },
 ];
 
 export default function Steps() {
   return (
-    <section className="w-full min-h-screen mx-auto py-24 px-4 bg-black">
-      <h2
-        className="relative w-fit mx-auto mb-20 px-12 py-5 font-extrabold 
-text-4xl md:text-5xl text-white tracking-tight select-none
-transition-transform duration-300 hover:scale-[1.03]"
-      >
-        {/* Orbital Glow Halo */}
-        <span
-          className="absolute inset-0 -z-20 rounded-full blur-3xl opacity-40 
-    bg-gradient-to-r from-blue-600 via-cyan-400 to-purple-600 animate-orbit"
-        ></span>
+    <section className="w-full py-32 bg-card/50 border-y border-primary/10 font-mono">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-24 space-y-4">
+          <p className="text-accent text-xs font-bold tracking-[0.5em] uppercase">Deployment_Workflow</p>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-primary uppercase">
+            From Init To Global Scale.
+          </h2>
+        </div>
 
-        {/* Animated Gradient Border Ring */}
-        <span
-          className="absolute inset-0 -z-10 rounded-full p-[3px] 
-    bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 
-    animate-gradient-border"
-        >
-          <span className="block h-full w-full rounded-full bg-[#0d0d0d]/80 backdrop-blur-xl"></span>
-        </span>
+        <div className="relative">
+          {/* Vertical Line for Tablet+ */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-primary/10 hidden lg:block" />
 
-        {/* Text Glow */}
-        <span className="relative drop-shadow-[0_0_20px_rgba(90,200,255,0.45)]">
-          How It Works
-        </span>
-      </h2>
+          <div className="space-y-24">
+            {steps.map((s, i) => (
+              <motion.div
+                key={s.step}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className={`flex flex-col lg:flex-row items-center gap-12 ${
+                  i % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
+                }`}
+              >
+                {/* Step Info */}
+                <div className="flex-1 text-center lg:text-left space-y-4">
+                   <div className={`flex items-center gap-4 justify-center ${i % 2 === 0 ? 'lg:justify-start' : 'lg:justify-end'}`}>
+                     <span className="text-4xl font-bold text-accent/20">#{s.step}</span>
+                     <h3 className="text-2xl font-bold text-primary uppercase">{s.title}</h3>
+                   </div>
+                   <p className={`text-sm text-muted-foreground uppercase leading-relaxed max-w-md mx-auto ${i % 2 === 0 ? 'lg:ml-0' : 'lg:mr-0'}`}>
+                     {s.desc}
+                   </p>
+                </div>
 
-      {/* FIX: wrap + centered + spacing */}
-      <div className="flex flex-wrap items-center justify-center gap-5">
-        {steps.map((s, i) => (
-          <div key={s.step} className="flex items-center">
-            {/* Step Card */}
-            <div className="p-8 bg-[#111] border border-[#222] rounded-xl text-center w-64">
-              <p className="text-5xl font-extrabold bg-gradient-to-b from-blue-200 via-pink-300 to-violet-400 text-transparent bg-clip-text">
-                {s.step}
-              </p>
-              <h3 className="text-xl font-bold text-white mt-4">{s.title}</h3>
-              <p className="text-gray-400 text-sm mt-2">{s.desc}</p>
-            </div>
+                {/* Central Icon Point */}
+                <div className="relative z-10 flex items-center justify-center h-20 w-20 bg-card border-2 border-primary/20 rounded-none shadow-[0_0_30px_rgba(148,163,184,0.1)] group hover:border-accent transition-colors">
+                  <s.icon size={24} className="text-primary/50 group-hover:text-accent transition-colors" />
+                </div>
 
-            {/* Arrow (only on big screens AND only if next step fits horizontally) */}
-            {/* {i < steps.length - 1 && (
-              <ArrowRight className="hidden lg:block mx-6 text-slate-500 size-10" />
-            )} */}
+                {/* Spacer for reverse layout */}
+                <div className="flex-1 hidden lg:block" />
+              </motion.div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );

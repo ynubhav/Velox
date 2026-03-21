@@ -47,7 +47,7 @@ export default function CompaniesCarousel() {
                 cursor-pointer
               "
             >
-              <span className="text-white font-semibold text-lg">
+              <span className="text-foreground font-semibold text-lg">
                 {company.name}
               </span>
             </Link>

@@ -1,100 +1,105 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { ArrowRight, Terminal, Shield, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const features = [
-  " Secure Proxying",
-  " Real-Time Monitoring",
-  " API Key Management",
-  " Redis Caching",
-  " Rate Limiting",
-  " Analytics Dashboard",
+const systemLogs = [
+  "INITIALIZING VELOX CORE...",
+  "LOADING REDIS_CACHE_MODULE...",
+  "ESTABLISHING SECURE_PROXY_GATEWAY...",
+  "READY FOR DEPLOYMENT.",
 ];
 
-const longest = Math.max(...features.map(f => f.length));
-
 export default function Hero() {
-  const [text, setText] = useState("");
-  const [index, setIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  //const session=useSession();
+  const [logIndex, setLogIndex] = useState(0);
 
   useEffect(() => {
-    const current = features[index];
-
-    const speed = isDeleting ? 40 : 80;
-
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        setText(current.substring(0, text.length + 1));
-
-        if (text.length + 1 === current.length) {
-          setTimeout(() => setIsDeleting(true), 700);
-        }
-      } else {
-        setText(current.substring(0, text.length - 1));
-
-        // don't let it be blank visually — switch immediately
-        if (text.length === 1) {
-          setIsDeleting(false);
-          setIndex((prev) => (prev + 1) % features.length);
-        }
-      }
-    }, speed);
-
-    return () => clearTimeout(timeout);
-  }, [text, isDeleting, index]);
+    const timer = setInterval(() => {
+      setLogIndex((prev) => (prev + 1) % systemLogs.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className="w-full h-screen bg-zinc-950 py-20 px-4 text-center rounded-none items-center flex flex-col justify-center">
-    <img className="h-40" src="veloxlogo.svg" alt="velox" />
-    <h1 className="font-bold italic text-left text-zinc-200 text-4xl py-2 z-10 p-4">Velox</h1>
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-xl md:text-3xl font-bold tracking-tight bg-linear-to-r from-blue-600 to-gray-700 text-transparent bg-clip-text p-3"
-      >
-        Secure, Fast & Scalable  
-        <br />
-        Your API Gateway Reimagined.
-        
-      </motion.h1>
-
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="mt-6 text-md text-left  text-white max-w-2xl mx-auto transition-all duration-500"
-      >
-        <span className="font-extralight text-gray-400">{"It has it ALL ! "}</span>
-        <span className="text-slate-500 font-mono">{text}</span>
-      </motion.span>
+    <section className="relative w-full min-h-[90vh] flex flex-col items-center justify-center px-4 overflow-hidden border-b border-primary/10">
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+           style={{ backgroundImage: "radial-gradient(var(--primary) 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-10 flex items-center justify-center gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-center z-10 max-w-4xl"
       >
-        <Link
-          href="/signup"
-          className="px-8 py-3 hover:px-6 gap-0 flex hover:gap-2 hover:scale-105 justify-center items-center  hover:space-x-2 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition-all duration-500"
-        >
-          Get Started <ArrowRight className="inline-block" size={18} />
-        </Link>
+        {/* System Badge */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 border border-accent/30 bg-accent/5 mb-8">
+          <Terminal size={12} className="text-accent" />
+          <span className="text-[10px] font-bold tracking-[0.2em] text-accent uppercase">
+            Protocol: Velox_v1.0.42 // Active
+          </span>
+        </div>
 
-        <Link
-          href="/docs"
-          className="px-6 py-3 rounded-xl border border-gray-600 hover:bg-gray-800 transition-all duration-500 hover:px-8 hover:text-gray-100  text-gray-400 font-semibold"
-        >
-          View Docs
-        </Link>
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tighter text-primary uppercase mb-6 leading-[0.9]">
+          Secure Your API <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-b from-primary to-primary/40">Infrastructure</span>
+        </h1>
+
+        <p className="text-sm md:text-lg text-muted-foreground uppercase tracking-widest max-w-2xl mx-auto mb-10 leading-relaxed">
+          The minimal, high-performance gateway for teams who demand 
+          <span className="text-primary italic"> absolute control </span> 
+          over their traffic.
+        </p>
+
+        {/* Console Log Area */}
+        <div className="mb-12 h-8 flex items-center justify-center gap-3">
+          <span className="text-accent/50 group-hover:text-accent transition-colors font-bold">{">"}</span>
+          <motion.span 
+            key={logIndex}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-xs md:text-sm font-mono text-accent/80 tracking-widest uppercase"
+          >
+            {systemLogs[logIndex]}
+          </motion.span>
+          <span className="w-2 h-4 bg-accent/50 animate-pulse ml-1" />
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <Link
+            href="/signup"
+            className="btn-primary flex items-center gap-3 group px-8"
+          >
+            [ INITIALIZE_PROJECT ]
+            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+
+          <Link
+            href="/docs"
+            className="btn-secondary px-8"
+          >
+            [ READ_DOCUMENTATION ]
+          </Link>
+        </div>
       </motion.div>
+
+      {/* Side Metadata Labels */}
+      <div className="hidden lg:flex absolute left-8 top-1/2 -translate-y-1/2 flex-col gap-12 border-l border-primary/10 pl-4 py-8 pointer-events-none">
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] text-muted-foreground/30 font-bold uppercase tracking-widest">LAYER_01</span>
+          <span className="text-[10px] text-primary/50 font-bold uppercase tracking-widest flex items-center gap-2">
+            <Shield size={10} /> AUTH_VALIDATION
+          </span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-[10px] text-muted-foreground/30 font-bold uppercase tracking-widest">LAYER_02</span>
+          <span className="text-[10px] text-primary/50 font-bold uppercase tracking-widest flex items-center gap-2">
+            <Zap size={10} /> REDIS_CACHE
+          </span>
+        </div>
+      </div>
     </section>
   );
 }
