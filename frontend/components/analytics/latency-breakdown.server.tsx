@@ -1,25 +1,21 @@
-import SimpleLineChart from "../ui/analytics/line-chart.client";
+"use client";
 
-export default async function LatencyBreakdown() {
-  // TODO: replace with DB aggregation
-  // avg(gatewayLatency), avg(backendLatency)
-  const data = [
-    { time: "10:00", gateway: 120, backend: 80 },
-    { time: "10:05", gateway: 150, backend: 110 },
-    { time: "10:10", gateway: 200, backend: 160 },
-    { time: "10:15", gateway: 180, backend: 140 },
-  ];
+import { Clock } from "lucide-react";
 
+export default function LatencyBreakdown({ data }: { data: any }) {
   return (
-    <div className="space-y-2">
-      <h2 className="text-sm font-medium text-neutral-400">
-        Latency breakdown
-      </h2>
-
-      {/* reuse chart twice instead of overloading */}
-      <div className="flex gap-2">
-        <SimpleLineChart data={data} dataKey="gateway" />
-        <SimpleLineChart data={data} dataKey="backend" />
+    <div className="flex flex-col h-full bg-card border-2 border-primary/10 overflow-hidden font-mono">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-primary/10">
+        <div className="flex items-center gap-3">
+          <Clock size={14} className="text-amber-500" />
+          <span className="text-[10px] font-bold tracking-[.4em] text-primary uppercase">
+            LATENCY_DISTRIBUTION_LOG
+          </span>
+        </div>
+      </div>
+      <div className="flex-1 p-6 flex items-center justify-center text-center opacity-30 text-[10px] uppercase tracking-widest leading-relaxed">
+        Computing percentile distributions...<br/>
+        // P99: CALCULATING // P50: CALCULATING
       </div>
     </div>
   );

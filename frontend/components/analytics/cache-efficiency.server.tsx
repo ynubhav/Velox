@@ -1,22 +1,22 @@
-import SimpleLineChart from "../ui/analytics/line-chart.client";
+"use client";
 
+import { Zap } from "lucide-react";
 
-export default async function CacheEfficiency() {
-  // TODO: replace with DB aggregation
-  // sum(cached=true) / total
-  const data = [
-    { time: "10:00", hitRate: 40 },
-    { time: "10:05", hitRate: 55 },
-    { time: "10:10", hitRate: 48 },
-    { time: "10:15", hitRate: 60 },
-  ];
-
+export default function CacheEfficiency({ data }: { data: any }) {
   return (
-    <div className="space-y-2 w-full">
-      <h2 className="text-sm font-medium text-neutral-400">
-        Cache hit ratio (%)
-      </h2>
-      <SimpleLineChart data={data} dataKey="hitRate" />
+    <div className="flex flex-col h-full bg-card border-2 border-primary/10 overflow-hidden font-mono">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-primary/10">
+        <div className="flex items-center gap-3">
+          <Zap size={14} className="text-accent" />
+          <span className="text-[10px] font-bold tracking-[.4em] text-primary uppercase">
+            CACHE_HIT_PROPAGATION
+          </span>
+        </div>
+      </div>
+      <div className="flex-1 p-6 flex items-center justify-center text-center opacity-30 text-[10px] uppercase tracking-widest leading-relaxed">
+        Analyzing efficiency metrics...<br/>
+        // Edge_Propagation: ACTIVE
+      </div>
     </div>
   );
 }

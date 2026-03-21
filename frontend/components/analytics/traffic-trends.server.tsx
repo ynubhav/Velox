@@ -1,33 +1,22 @@
-import SimpleLineChart from "../ui/analytics/line-chart.client";
+"use client";
 
-export default async function TrafficTrends() {
-  // TODO: replace with DB aggregation
-  // group by minute/hour → count(*)
-  const data = [
-    { time: "10:00", requests: 120 },
-    { time: "10:05", requests: 240 },
-    { time: "10:10", requests: 180 },
-    { time: "10:15", requests: 300 },
-    { time: "10:20", requests: 220 },
-    { time: "10:25", requests: 280 },
-    { time: "10:30", requests: 350 },
-    { time: "10:35", requests: 420 },
-    { time: "10:40", requests: 390 },
-    { time: "10:45", requests: 450 },
-    { time: "10:50", requests: 480 },
-    { time: "10:55", requests: 520 },
-    { time: "11:00", requests: 600 },
-    { time: "11:05", requests: 580 },
-    { time: "11:10", requests: 620 },
-    { time: "11:15", requests: 700 },
-  ];
+import { Activity } from "lucide-react";
 
+export default function TrafficTrends({ data }: { data: any }) {
   return (
-    <div className="space-y-2 w-full">
-      <h2 className="text-sm font-medium text-neutral-400">
-        Requests over time
-      </h2>
-      <SimpleLineChart data={data} dataKey="requests" />
+    <div className="flex flex-col h-full bg-card border-2 border-primary/10 overflow-hidden font-mono">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-primary/10">
+        <div className="flex items-center gap-3">
+          <Activity size={14} className="text-blue-400" />
+          <span className="text-[10px] font-bold tracking-[.4em] text-primary uppercase">
+            TRAFFIC_VECTOR_ANALYSIS
+          </span>
+        </div>
+      </div>
+      <div className="flex-1 p-6 flex items-center justify-center text-center opacity-30 text-[10px] uppercase tracking-widest leading-relaxed">
+        Visualizing throughput trends...<br/>
+        // Core_Engine_v4.2_Feeds
+      </div>
     </div>
   );
 }

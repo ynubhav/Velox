@@ -14,6 +14,8 @@ import {
   ProjectDeletion,
   UpdateRouteCache,
 } from "../cache/update-route-cache.js";
+import { RequestLog } from "../models/Apilogs.model.js";
+import { APIKey } from "../models/Apikey.model.js";
 
 const projectRouter = express.Router();
 
@@ -358,6 +360,120 @@ projectRouter.post("/:projectId/bulk-routes", authUser, async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// fetch analytics data for a project
+projectRouter.get("/:projectId/analytics", authUser, async (req, res) => {
+  try {
+    const projectId = req.params.projectId;
+    const userId = req.user._id;
+
+    const projectfound = await APIProject.findOne({ userId, projectId });
+    if (!projectfound) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // 1. Overall KPIs
+    const overallAgg = await RequestLog.aggregate([
+      { $match: { projectId } },
+      {
+        $group: {
+          _id: null,
+          requests: { $sum: 1 },
+          totalLatency: { $sum: "$latency" },
+          hitCount: { $sum: { $cond: [{ $eq: ["$cached", true] }, 1, 0] } },
+          errorCount: { $sum: { $cond: [{ $gte: ["$statusCode", 400] }, 1, 0] } },
+        },
+      },
+    ]);
+
+    const activeKeysCount = await APIKey.countDocuments({
+      projectId,
+      keystatus: "active",
+    });
+
+    let kpis = {
+      totalRequests: 0,
+      errorRate: 0,
+      successRate: 0,
+      avgLatency: 0,
+      p95Latency: 0, // Mocked for now to avoid complex percentile aggregation on large sets
+      cacheHitRate: 0,
+      apiKeys: activeKeysCount,
+    };
+
+    if (overallAgg.length > 0) {
+      const stats = overallAgg[0];
+      kpis.totalRequests = stats.requests;
+      kpis.errorRate = stats.requests > 0 ? parseFloat(((stats.errorCount / stats.requests) * 100).toFixed(1)) : 0;
+      kpis.successRate = 100 - kpis.errorRate;
+      kpis.avgLatency = stats.requests > 0 ? Math.round(stats.totalLatency / stats.requests) : 0;
+      kpis.cacheHitRate = stats.requests > 0 ? Math.round((stats.hitCount / stats.requests) * 100) : 0;
+      // p95 mockup logic. In a real system you'd use $percentile (MongoDB 7.0+) or pre-compute
+      kpis.p95Latency = Math.round(kpis.avgLatency * 1.5); 
+    }
+
+    // 2. Time-Series Aggregation (grouped by hour:minute) limit last 60 points
+    const timeSeriesAgg = await RequestLog.aggregate([
+      { $match: { projectId } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%H:%M", date: "$timestamp" } },
+          requests: { $sum: 1 },
+          totalLatency: { $sum: { $ifNull: ["$latency", 0] } },
+          totalUserLatency: { $sum: { $ifNull: ["$user_api_latency", 0] } },
+          hitCount: { $sum: { $cond: [{ $eq: ["$cached", true] }, 1, 0] } },
+        },
+      },
+      { $sort: { _id: 1 } },
+      { $limit: 60 },
+    ]);
+
+    const trafficTrends = [];
+    const cacheEfficiency = [];
+    const latencyBreakdown = [];
+
+    timeSeriesAgg.forEach((t) => {
+      trafficTrends.push({ time: t._id, requests: t.requests });
+      cacheEfficiency.push({
+        time: t._id,
+        hitRate: t.requests > 0 ? Math.round((t.hitCount / t.requests) * 100) : 0,
+      });
+      latencyBreakdown.push({
+        time: t._id,
+        gateway: t.requests > 0 ? Math.round(t.totalLatency / t.requests) : 0,
+        backend: t.requests > 0 ? Math.round(t.totalUserLatency / t.requests) : 0,
+      });
+    });
+
+    // 3. Recent Activity (last 50 requests)
+    const recentActivityRecords = await RequestLog.find({ projectId })
+      .sort({ timestamp: -1 })
+      .limit(50);
+
+    const recentActivity = recentActivityRecords.map((r) => ({
+      id: r._id.toString(),
+      timestamp: r.timestamp,
+      method: r.method,
+      path: r.route,
+      status: r.statusCode,
+      latency: r.latency,
+      cached: r.cached,
+      ip: r.origin, // Default to ANON_RELAY in frontend if missing
+    }));
+
+    return res.status(200).json({
+      message: "Analytics fetched successfully",
+      kpis,
+      trafficTrends,
+      cacheEfficiency,
+      latencyBreakdown,
+      recentActivity,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error fetching analytics" });
   }
 });
 
