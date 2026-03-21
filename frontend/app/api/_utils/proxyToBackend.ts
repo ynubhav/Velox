@@ -22,12 +22,25 @@ export async function proxyToBackend(
       ? undefined
       : await req.text();
 
-  return fetch(`${process.env.BACKEND_URL}${path}`, {
+  const backendRes = await fetch(`${process.env.BACKEND_URL}${path}`, {
     method,
     headers: {
       Authorization: `Bearer ${token.backendjwt}`,
       ...(body ? { "Content-Type": "application/json" } : {}),
     },
     body,
+  });
+
+  const responseBody = await backendRes.arrayBuffer();
+
+  const headers = new Headers(backendRes.headers);
+
+  // Kill compression-related headers
+  headers.delete("content-encoding");
+  headers.delete("content-length");
+
+  return new Response(responseBody, {
+    status: backendRes.status,
+    headers,
   });
 }
